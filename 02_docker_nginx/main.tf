@@ -1,3 +1,5 @@
+# Exercice 2.1 - Déployer Nginx
+
 terraform {
   required_providers {
     docker = {
