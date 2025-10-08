@@ -1,3 +1,4 @@
+# Fichier global .gitignore pour tous les exercices
 # Fichiers Terraform à ignorer
 *.tfstate
 *.tfstate.*
