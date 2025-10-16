@@ -2,29 +2,38 @@ name: CI/CD - Build & Push Docker Image
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main  # le pipeline s'exécute quand tu pushes sur la branche main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: 🧩 Récupération du code
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: 🐍 Configuration de Python (optionnel pour test Flask)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-      - name: Log in to Docker Hub
+      - name: 🔧 Installation des dépendances (si tu as un requirements.txt)
+        run: |
+          cd app-cicd
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: 🐳 Build de l’image Docker
+        run: |
+          cd app-cicd
+          docker build -t tastasdz/myapp:latest .
+
+      - name: 🔑 Connexion à Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: tastasdz/myapp:latest
+      - name: 🚀 Push de l’image sur Docker Hub
+        run: |
+          docker push tastasdz/myapp:latest
